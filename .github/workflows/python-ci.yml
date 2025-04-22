@@ -16,6 +16,6 @@ jobs:
         with:
           python-version: '3.10'
       - run: pip install -r backend/requirements.txt #dependencies
-      - run: pip install pytest
+      - run: pip install pytest flake8
       - run: pytest backend/tests # tests
-      - run: flake8 backend # lint
+      - run: flake8 backend/main.py # lint

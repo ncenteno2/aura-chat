@@ -1,14 +1,17 @@
 // import { useState } from 'react'
+import { Routes, Route } from 'react-router-dom';
+import Home from '../components/Home'
+import Login from '../components/LoginForm'
 import './App.css'
 
 function App() {
 
   return (
     <>
-      <h1>Aura Chat</h1>
-      <button>Register</button>
-      <button>Login</button>
-      <button>Join as Guest</button>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
     </>
   )
 }

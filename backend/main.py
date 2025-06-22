@@ -60,3 +60,18 @@ async def register(user: User):
         con.commit()
         con.close()
         return {"message": "Usuario registrado exitosamente"}
+
+@app.post("/login")
+async def login(user: User):
+    con = sqlite3.connect("users.db")
+    cursor = con.cursor()
+
+    cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (user.username, user.password))
+    result = cursor.fetchone()
+
+    con.close()
+
+    if result:
+        return {"message": "Inicio de sesión existoso"}
+    else:
+        return {"message": "Nombre de usuario o contraseña incorrectos"}

@@ -88,3 +88,8 @@ async def login(user: User):
     if result:
         return {"message": "Inicio de sesión exitoso"}
     return {"message": "Nombre de usuario o contraseña incorrectos"}
+
+
+@app.get("/chat")
+async def get_chat():
+    return {"message": "Bienvenido"}

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
 export default function Home() {
-    const [message, setMessage] = useState("");
+    const [messages, setMessages] = useState([]);
+    const [newMessage, setNewMessage] = useState("");
 
     useEffect(() => {
         async function fetchChat() {
@@ -14,7 +15,7 @@ export default function Home() {
                 }
 
                 const data = await res.json();
-                setMessage(data.message);
+                setMessage(data.messages);
             } catch {
                 setMessage("ERROR: no se pudo conectar al servidor");
             }
@@ -23,9 +24,37 @@ export default function Home() {
         fetchChat();
     }, []);
 
+    async function handleSendMessage() {
+      const response = await fetch("http://localhost:8000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: newMessage }),
+      });
+
+      if (!response.ok) {
+        console.error("Error al enviar el mensaje");
+        return;
+      }
+      setMessages(prev => [...prev, newMessage]); 
+      setNewMessage("");
+    }
+
+
     return (
     <div>
-      <p>{message}</p>
+      <div>
+        {messages.map((msg, i) => (
+          <p key={i}>{msg}</p>
+        ))}
+      </div>
+      <input
+        placeholder="Type your message here..."
+        value={newMessage}
+        onChange={(e) => setNewMessage(e.target.value)}
+      />
+      <button onClick = {handleSendMessage}>
+        Send
+      </button>
     </div>
   );
 }

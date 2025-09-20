@@ -19,12 +19,30 @@ def init_db():
     con.close()
 
 
+def init_message_db():
+    con = sqlite3.connect("messages.db")
+    cursor = con.cursor()
+    cursor.execute(
+        """
+    CREATE TABLE IF NOT EXISTS messages (
+        message TEXT NOT NULL
+    );
+    """
+    )
+    con.commit()
+    con.close()
+
 class User(BaseModel):
     username: str
     password: str
 
+class ChatMessage(BaseModel):
+    message: str
+
 
 init_db()
+
+init_message_db()
 
 
 app = FastAPI()
@@ -92,4 +110,25 @@ async def login(user: User):
 
 @app.get("/chat")
 async def get_chat():
-    return {"message": "Bienvenido"}
+    con = sqlite3.connect("messages.db")
+    cursor = con.cursor()
+    cursor.execute("SELECT message FROM ChatMessage")
+    rows = cursor.fetchall()
+    con.close()
+    messages = [row[0] for row in rows]
+    return {"messages": messages}
+
+
+@app.post("/chat")
+async def send_message(message: ChatMessage):
+    con = sqlite3.connect("messages.db")
+    cursor = con.cursor()
+    cursor.execute("SELECT * FROM messages")
+    result = cursor.fetchone()
+    cursor.execute(
+        "INSERT INTO messages (message) VALUES (?)",
+        (message.message,),
+    )
+    con.commit()
+    con.close()
+
